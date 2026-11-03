@@ -10,12 +10,27 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class VisitServiceImpl implements VisitService {
 
     private final VisitRepository visitRepository;
     private final PetRepository petRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Visit> findAll() {
+        return visitRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Visit> findById(Long id) {
+        return visitRepository.findById(id);
+    }
 
     @Override
     @Transactional

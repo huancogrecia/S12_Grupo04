@@ -10,9 +10,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -28,6 +31,29 @@ class VisitControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Test
+    void testFindAllVisits() throws Exception {
+        mockMvc.perform(get("/visits"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(6))));
+    }
+
+    @Test
+    void testFindVisitOK() throws Exception {
+        mockMvc.perform(get("/visits/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.description", is("rabies shot")));
+    }
+
+    @Test
+    void testFindVisitKO() throws Exception {
+        mockMvc.perform(get("/visits/666"))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     void testCreateVisit() throws Exception {
